@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Review Page</h1>
+
+    <!-- Product Information Section -->
+    <section>
+        <h2>Product Information</h2>
+        {% if data_store.product_info %}
+            <div class="card">
+                <p><strong>Product Name:</strong> {{ data_store.product_info.product_name }}</p>
+                <p><strong>Version:</strong> {{ data_store.product_info.version }}</p>
+                <p><strong>Launch Date:</strong> {{ data_store.product_info.launch_date }}</p>
+                <p><strong>Status:</strong> {{ data_store.product_info.status }}</p>
+                <p><strong>Product Properties:</strong> {{ ", ".join(data_store.product_info.product_properties) }}</p>
+                <p><strong>Retirement Date:</strong> {{ data_store.product_info.retirement_date }}</p>
+                <p><strong>Description:</strong> {{ data_store.product_info.description }}</p>
+                <p><strong>Risks:</strong> {{ data_store.product_info.risks }}</p>
+                <p><strong>Additional Properties:</strong> {{ data_store.product_info.additional_properties }}</p>
+                <p><strong>Documentation URL:</strong> <a href="{{ data_store.product_info.documentation_url }}" target="_blank">{{ data_store.product_info.documentation_url }}</a></p>
+                <p><strong>Repository URL:</strong> <a href="{{ data_store.product_info.repository_url }}" target="_blank">{{ data_store.product_info.repository_url }}</a></p>
+                <p><strong>Metrics Dashboard:</strong> <a href="{{ data_store.product_info.metrics_dashboard }}" target="_blank">{{ data_store.product_info.metrics_dashboard }}</a></p>
+            </div>
+        {% else %}
+            <p>No Product Information provided.</p>
+        {% endif %}
+    </section>
+
+    <!-- Business Value Section -->
+    <section>
+        <h2>Business Value</h2>
+        {% if data_store.business_value %}
+            <div class="card">
+                <p><strong>Decision Making:</strong> {{ data_store.business_value.decision_making }}</p>
+                <p><strong>Monetization:</strong> {{ data_store.business_value.monetization }}</p>
+                <p><strong>Time Savings:</strong> {{ data_store.business_value.time_savings }}</p>
+                <p><strong>Reporting:</strong> {{ data_store.business_value.reporting }}</p>
+                <p><strong>Processes:</strong> {{ data_store.business_value.processes }}</p>
+                <p><strong>Collaboration:</strong> {{ data_store.business_value.collaboration }}</p>
+                <p><strong>Documentation Audits:</strong> {{ data_store.business_value.documentation_audits }}</p>
+            </div>
+        {% else %}
+            <p>No Business Value data provided.</p>
+        {% endif %}
+    </section>
+
+    <!-- Product Owner Information Section -->
+    <section>
+        <h2>Product Owner Information</h2>
+        {% if data_store.product_owner_main %}
+            <div class="card">
+                <p><strong>Product Owner Name:</strong> {{ data_store.product_owner_main.product_owner_name }}</p>
+                <p><strong>ZID:</strong> {{ data_store.product_owner_main.product_owner_zid }}</p>
+                <p><strong>Email:</strong> {{ data_store.product_owner_main.product_owner_email }}</p>
+                <p><strong>Valid From:</strong> {{ data_store.product_owner_main.valid_from_date }}</p>
+                <p><strong>Valid To:</strong> {{ data_store.product_owner_main.valid_to_date }}</p>
+            </div>
+        {% else %}
+            <p>No Product Owner Information provided in main page.</p>
+        {% endif %}
+    </section>
+
+
+    <section>
+        <h2>Product Owners</h2>
+        {% if data_store.product_owners %}
+            <div class="card-container">
+                {% for owner in data_store.product_owners %}
+                    <div class="card">
+                        <p><strong>Name:</strong> {{ owner.name }}</p>
+                        <p><strong>ZID:</strong> {{ owner.zid }}</p>
+                        <p><strong>Email:</strong> {{ owner.email }}</p>
+                        <p><strong>Type:</strong> {{ owner.type }}</p>
+                        <p><strong>Valid From:</strong> {{ owner.valid_from }}</p>
+                        <p><strong>Valid To:</strong> {{ owner.valid_to }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No Product Owner data.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Business Owners</h2>
+        {% if data_store.business_owners %}
+            <div class="card-container">
+                {% for owner in data_store.business_owners %}
+                    <div class="card">
+                        <p><strong>Name:</strong> {{ owner.name }}</p>
+                        <p><strong>ZID:</strong> {{ owner.zid }}</p>
+                        <p><strong>Email:</strong> {{ owner.email }}</p>
+                        <p><strong>Type:</strong> {{ owner.type }}</p>
+                        <p><strong>Valid From:</strong> {{ owner.valid_from }}</p>
+                        <p><strong>Valid To:</strong> {{ owner.valid_to }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No Business Owner data.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Snowflake Data Sources</h2>
+        {% if data_store.snowflake_data_sources %}
+            <div class="card-container">
+                {% for source in data_store.snowflake_data_sources %}
+                    <div class="card">
+                        <p><strong>Database Name:</strong> {{ source.database_name }}</p>
+                        <p><strong>Schema Name:</strong> {{ source.schema_name }}</p>
+                        <p><strong>Table Name:</strong> {{ source.table_name }}</p>
+                        <p><strong>Data Type:</strong> {{ source.data_type }}</p>
+                        <p><strong>Valid From:</strong> {{ source.valid_from }}</p>
+                        <p><strong>Valid To:</strong> {{ source.valid_to }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No Snowflake Data Source data.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Other Data Sources</h2>
+        {% if data_store.other_data_sources %}
+            <div class="card-container">
+                {% for source in data_store.other_data_sources %}
+                    <div class="card">
+                        <p><strong>Dataset Name:</strong> {{ source.dataset_name }}</p>
+                        <p><strong>Dataset Description:</strong> {{ source.dataset_description }}</p>
+                        <p><strong>Data Type:</strong> {{ source.data_type }}</p>
+                        <p><strong>Dataset Type:</strong> {{ source.dataset_type }}</p>
+                        <p><strong>Valid From:</strong> {{ source.valid_from }}</p>
+                        <p><strong>Valid To:</strong> {{ source.valid_to }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No Other Data Source data.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Platform Information</h2>
+        {% if data_store.platforms %}
+            <div class="card-container">
+                {% for platform in data_store.platforms %}
+                    <div class="card">
+                        <p><strong>Platform Name:</strong> {{ platform.platform_name }}</p>
+                        <p><strong>Platform Description:</strong> {{ platform.platform_description }}</p>
+                        <p><strong>Valid From:</strong> {{ platform.valid_from }}</p>
+                        <p><strong>Valid To:</strong> {{ platform.valid_to }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No Platform Information provided.</p>
+        {% endif %}
+    </section>
+    <!-- Navigation Buttons -->
+    <div class="buttons">
+        <button type="button" onclick="window.location.href='{{ url_for('step6') }}'">Previous</button>
+        <form method="POST" action="{{ url_for('submit_to_snowflake') }}">
+            <button type="submit">Submit Data to Snowflake</button>
+        </form>
+    </div>
+</body>
+</html>

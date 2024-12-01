@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function addSubform(platform = null) {
+            let platformCount = document.querySelectorAll(".subform").length + 1;
+            const container = document.getElementById("subform-container");
+
+            const platformName = platform ? platform.platform_name : "";
+            const platformDescription = platform ? platform.platform_description : "";
+            const validFrom = platform ? platform.valid_from : new Date().toISOString().split("T")[0];
+            const validTo = platform ? platform.valid_to : "9999-12-31";
+
+            const subform = `
+                <div class="subform" id="subform-${platformCount}">
+                    <h3>Platform ${platformCount}</h3>
+                    
+                    <label for="platform_name-Subform-${platformCount}">Platform Name:</label>
+                    <input type="text" name="platform_name-Subform-${platformCount}" value="${platformName}" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the name of the platform.</span>
+                    </div>
+                    <br>
+
+                    <label for="platform_description-Subform-${platformCount}">Platform Description:</label>
+                    <textarea name="platform_description-Subform-${platformCount}" required>${platformDescription}</textarea>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Provide a brief description of the platform.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_from-Subform-${platformCount}">Valid From:</label>
+                    <input type="date" name="valid_from-Subform-${platformCount}" value="${validFrom}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is today’s date.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_to-Subform-${platformCount}">Valid To:</label>
+                    <input type="date" name="valid_to-Subform-${platformCount}" value="${validTo}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is 9999-12-31.</span>
+                    </div>
+                    <br>
+
+                    <button type="button" onclick="removeSubform(${platformCount})">Remove</button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML("beforeend", subform);
+            const addButtonContainer = document.getElementById("add-button-container");
+            container.appendChild(addButtonContainer);
+
+            updateSkipButtonVisibility();
+        }
+
+        function removeSubform(index) {
+            const subform = document.getElementById(`subform-${index}`);
+            if (subform) subform.remove();
+
+            updateSkipButtonVisibility();
+        }
+
+        function updateSkipButtonVisibility() {
+            const skipButton = document.getElementById("skip-button");
+            const subformCount = document.querySelectorAll(".subform").length;
+
+            skipButton.style.display = subformCount === 0 ? "inline-block" : "none";
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load pre-existing subforms if available
+            const Platforms = {{ platforms | tojson }};
+            if (Platforms.length > 0) {
+                Platforms.forEach(platform => addSubform(platform));
+            } else {
+                updateSkipButtonVisibility();
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Platform Information</h1>
+    <form method="POST">
+        
+        <div id="subform-container"></div>
+
+        <div id="add-button-container">
+            <button type="button" onclick="addSubform()">Add Platform</button>
+        </div>
+
+        <!-- Previous Button -->
+        <button type="submit" name="action" value="back_to_step5">Previous</button>
+        <!-- Skip Button -->
+        <button type="submit" id="skip-button" name="action" value="skip" style="display: none;">Skip</button>
+        <!-- Next Button -->
+        <button type="submit" name="action" value="next_to_review">Save and Move to Review</button>
+    </form>
+</body>
+</html>

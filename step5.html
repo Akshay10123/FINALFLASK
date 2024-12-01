@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Other Data Sources</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function addSubform(source = null) {
+            let sourceCount = document.querySelectorAll(".subform").length + 1;
+            const container = document.getElementById("subform-container");
+
+            const datasetName = source ? source.dataset_name : "";
+            const description = source ? source.dataset_description : "";
+            const dataType = source ? source.data_type : "";
+            const datasetType = source ? source.dataset_type : "Source";
+            const validFrom = source ? source.valid_from : new Date().toISOString().split("T")[0];
+            const validTo = source ? source.valid_to : "9999-12-31";
+
+            const subform = `
+                <div class="subform" id="subform-${sourceCount}">
+                    <h3>Data Source ${sourceCount}</h3>
+                    
+                    <label for="dataset-Subform-${sourceCount}">Dataset Name:</label>
+                    <input type="text" name="dataset-Subform-${sourceCount}" value="${datasetName}" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the dataset name.</span>
+                    </div>
+                    <br>
+
+                    <label for="description-Subform-${sourceCount}">Dataset Description:</label>
+                    <textarea name="description-Subform-${sourceCount}" required>${description}</textarea>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Provide a brief description of the dataset.</span>
+                    </div>
+                    <br>
+
+                    <label for="data_type-Subform-${sourceCount}">Data Type:</label>
+                    <textarea name="data_type-Subform-${sourceCount}" required>${dataType}</textarea>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the type of data.</span>
+                    </div>
+                    <br>
+
+                    <label for="dataset_type-Subform-${sourceCount}">Dataset Type:</label>
+                    <select name="dataset_type-Subform-${sourceCount}" required>
+                        <option value="Source" ${datasetType === "Source" ? "selected" : ""}>Source</option>
+                        <option value="Output" ${datasetType === "Output" ? "selected" : ""}>Output</option>
+                        <option value="Source and Output" ${datasetType === "Source and Output" ? "selected" : ""}>Source and Output</option>
+                    </select>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Select the dataset type.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_from-Subform-${sourceCount}">Valid From:</label>
+                    <input type="date" name="valid_from-Subform-${sourceCount}" value="${validFrom}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is today’s date.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_to-Subform-${sourceCount}">Valid To:</label>
+                    <input type="date" name="valid_to-Subform-${sourceCount}" value="${validTo}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is 9999-12-31.</span>
+                    </div>
+                    <br>
+
+                    <button type="button" onclick="removeSubform(${sourceCount})">Remove</button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML("beforeend", subform);
+            const addButtonContainer = document.getElementById("add-button-container");
+            container.appendChild(addButtonContainer);
+
+            updateSkipButtonVisibility();
+        }
+
+        function removeSubform(index) {
+            const subform = document.getElementById(`subform-${index}`);
+            if (subform) subform.remove();
+
+            updateSkipButtonVisibility();
+        }
+
+        function updateSkipButtonVisibility() {
+            const skipButton = document.getElementById("skip-button");
+            const subformCount = document.querySelectorAll(".subform").length;
+
+            skipButton.style.display = subformCount === 0 ? "inline-block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const otherDataSources = {{ other_data_sources | tojson }};
+            if (otherDataSources.length > 0) {
+                otherDataSources.forEach(source => addSubform(source));
+            } else {
+                updateSkipButtonVisibility();
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Other Data Sources</h1>
+    <form method="POST">
+        <div id="subform-container"></div>
+
+        <div id="add-button-container">
+            <button type="button" onclick="addSubform()">Add Data Source</button>
+        </div>
+
+        <!-- Previous Button -->
+        <button type="submit" name="action" value="back_to_step4">Previous</button>
+        <!-- Skip Button -->
+        <button type="submit" id="skip-button" name="action" value="skip" style="display: none;">Skip</button>
+        <!-- Next Button -->
+        <button type="submit" name="action" value="next_to_step6">Save and Move to Review</button>
+    </form>
+</body>
+</html>

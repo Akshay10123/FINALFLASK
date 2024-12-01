@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business User Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function validateField(input) {
+            const fieldName = input.name.split("-")[0];
+            const errorField = input.nextElementSibling;
+
+            let isValid = true;
+
+            if (fieldName === "name") {
+                isValid = input.value.trim() !== "";
+                errorField.textContent = isValid ? "" : "Name is required.";
+            } else if (fieldName === "zid") {
+                isValid = /^[a-zA-Z0-9]{6}$/.test(input.value);
+                errorField.textContent = isValid ? "" : "ZID must be 6 alphanumeric characters.";
+            } else if (fieldName === "email") {
+                isValid = /^[a-zA-Z0-9._%+-]+@xyz\.com$/.test(input.value);
+                errorField.textContent = isValid ? "" : "Email should end with @xyz.com.";
+            } else if (fieldName === "type") {
+                isValid = input.value.trim() !== "";
+                errorField.textContent = isValid ? "" : "Type is required.";
+            }
+
+            input.style.borderColor = isValid ? "green" : "red";
+        }
+
+        function addSubform(ownerData = null) {
+            let ownerCount = document.querySelectorAll(".subform").length + 1;
+            const container = document.getElementById("subform-container");
+
+            const name = ownerData ? ownerData.name : "";
+            const zid = ownerData ? ownerData.zid : "";
+            const email = ownerData ? ownerData.email : "";
+            const type = ownerData ? ownerData.type : "Owner";
+            const validFrom = ownerData ? ownerData.valid_from : new Date().toISOString().slice(0, 10);
+            const validTo = ownerData ? ownerData.valid_to : "9999-12-31";
+
+            const subform = `
+                <div class="subform" id="subform-${ownerCount}">
+                    <h3>Business Owner ${ownerCount}</h3>
+                    
+                    <label for="name-Subform-${ownerCount}">Name:</label>
+                    <input type="text" name="name-Subform-${ownerCount}" value="${name}" oninput="validateField(this)" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Provide the full name of the Business owner.</span>
+                    </div>
+                    <br>
+
+                    <label for="zid-Subform-${ownerCount}">ZID:</label>
+                    <input type="text" name="zid-Subform-${ownerCount}" value="${zid}" oninput="validateField(this)" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">ZID must be exactly 6 alphanumeric characters.</span>
+                    </div>
+                    <br>
+
+                    <label for="email-Subform-${ownerCount}">Email:</label>
+                    <input type="email" name="email-Subform-${ownerCount}" value="${email}" oninput="validateField(this)" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Email should end with @xyz.com.</span>
+                    </div>
+                    <br>
+
+                    <label for="type-Subform-${ownerCount}">Type:</label>
+                    <select name="type-Subform-${ownerCount}" oninput="validateField(this)" required>
+                        <option value="Member" ${type === "Member" ? "selected" : ""}>Member</option>
+                        <option value="Owner" ${type === "Owner" ? "selected" : ""}>Owner</option>
+                    </select>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Choose the role of the Business owner (Member or Owner).</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_from-Subform-${ownerCount}">Valid From:</label>
+                    <input type="date" name="valid_from-Subform-${ownerCount}" value="${validFrom}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is today’s date.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_to-Subform-${ownerCount}">Valid To:</label>
+                    <input type="date" name="valid_to-Subform-${ownerCount}" value="${validTo}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is 9999-12-31.</span>
+                    </div>
+                    <br>
+
+                    <button type="button" onclick="removeSubform(${ownerCount})">Remove</button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML("beforeend", subform);
+            const addButtonContainer = document.getElementById("add-button-container");
+            container.appendChild(addButtonContainer);
+
+            updateSkipButtonVisibility();
+        }
+
+        function removeSubform(index) {
+            const subform = document.getElementById(`subform-${index}`);
+            if (subform) subform.remove();
+
+            updateSkipButtonVisibility();
+        }
+
+        function updateSkipButtonVisibility() {
+            const skipButton = document.getElementById("skip-button");
+            const subformCount = document.querySelectorAll(".subform").length;
+
+            skipButton.style.display = subformCount === 0 ? "inline-block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const BusOwners = {{ business_owners | tojson }};
+            if (BusOwners.length > 0) {
+                BusOwners.forEach(owner => addSubform(owner));
+            } else {
+                updateSkipButtonVisibility();
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Business Owner Form</h1>
+    <form method="POST">
+        <div id="subform-container"></div>
+
+        <div id="add-button-container">
+            <button type="button" onclick="addSubform()">Add Business Owner</button>
+        </div>
+
+        <button type="submit" name="action" value="back_to_step2">Previous</button>
+        <button type="submit" id="skip-button" name="action" value="skip" style="display: none;">Skip</button>
+        <button type="submit" name="action" value="next_to_step4">Save and Move to Step 3</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Product Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Email Validation
+        function validateEmail(input) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@xyz\.com$/;
+            const errorField = document.getElementById("email-error");
+            if (emailRegex.test(input.value)) {
+                errorField.textContent = "";
+                input.style.borderColor = "green";
+            } else {
+                errorField.textContent = "Email must end with @xyz.com.";
+                input.style.borderColor = "red";
+            }
+        }
+
+        // ZID Validation
+        function validateZID(input) {
+            const zidRegex = /^[a-zA-Z0-9]{6}$/;
+            const errorField = document.getElementById("zid-error");
+            if (zidRegex.test(input.value)) {
+                errorField.textContent = "";
+                input.style.borderColor = "green";
+            } else {
+                errorField.textContent = "ZID must be 6 alphanumeric characters.";
+                input.style.borderColor = "red";
+            }
+        }
+
+        // URL Validation
+        function validateURL(input) {
+            const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/;
+            const errorField = input.nextElementSibling;
+            if (input.value.trim() === "" || urlRegex.test(input.value)) {
+                errorField.textContent = "";
+                input.style.borderColor = "green";
+            } else {
+                errorField.textContent = "Invalid URL format.";
+                input.style.borderColor = "red";
+            }
+        }
+
+        // Update slider values dynamically
+        function updateSliderValue(slider) {
+            const value = slider.value;
+            slider.nextElementSibling.innerText = value;
+        }
+        console.log({{ data_store | tojson | safe }});
+        // Populate default or pre-filled data on DOM load
+        document.addEventListener("DOMContentLoaded", () => {
+            const data = {{ data_store | tojson | safe }};
+            
+            // Product Information
+            const productInfo = data.product_info || {};
+            document.getElementById("product_name").value = productInfo.product_name || "";
+            document.getElementById("version").value = productInfo.version || "";
+            document.getElementById("launch_date").value = productInfo.launch_date || new Date().toISOString().split("T")[0];
+            document.getElementById("status").value = productInfo.status || "Active";
+
+            const productProperties = productInfo.product_properties || [];
+            Array.from(document.getElementById("product_properties").options).forEach(option => {
+                option.selected = productProperties.includes(option.value);
+            });
+
+            document.getElementById("retirement_date").value = productInfo.retirement_date || "9999-12-31";
+            document.getElementById("description").value = productInfo.description || "";
+            document.getElementById("risks").value = productInfo.risks || "";
+            document.getElementById("additional_properties").value = productInfo.additional_properties || "";
+            document.getElementById("documentation_url").value = productInfo.documentation_url || "";
+            document.getElementById("repository_url").value = productInfo.repository_url || "";
+            document.getElementById("metrics_dashboard").value = productInfo.metrics_dashboard || "";
+
+            // Business Value
+            const businessValue = data.business_value || {};
+            ["decision_making", "monetization", "time_savings", "reporting", "processes", "collaboration", "documentation_audits"].forEach(field => {
+                const slider = document.getElementById(field);
+                const span = slider.nextElementSibling;
+                slider.value = businessValue[field] || 5;
+                span.innerText = slider.value;
+            });
+
+            // Product Owner Information
+            const productOwner = data.product_owner_main || {};
+            document.getElementById("product_owner_name").value = productOwner.product_owner_name || "";
+            document.getElementById("product_owner_zid").value = productOwner.product_owner_zid || "";
+            document.getElementById("product_owner_email").value = productOwner.product_owner_email || "";
+            document.getElementById("valid_from_date").value = productOwner.valid_from_date || new Date().toISOString().split("T")[0];
+            document.getElementById("valid_to_date").value = productOwner.valid_to_date || "9999-12-31";
+        });
+    </script>
+</head>
+<body>
+    <h1>Step 1: Product Information</h1>
+    <form method="POST">
+        <!-- Product Information Section -->
+        <section>
+            <h2>Product Information</h2>
+            <div>
+                <label for="product_name">Product Name:</label>
+                <input type="text" id="product_name" name="product_name" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Enter the name of the product.</span>
+                </div>
+            </div>
+            <div>
+                <label for="version">Version (Optional):</label>
+                <input type="text" id="version" name="version">
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Enter the version of the product if applicable.</span>
+                </div>
+            </div>
+            <div>
+                <label for="launch_date">Launch Date:</label>
+                <input type="date" id="launch_date" name="launch_date" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Specify the launch date of the product.</span>
+                </div>
+            </div>
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="Active">Active</option>
+                    <option value="In development">In development</option>
+                </select>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Choose the current status of the product.</span>
+                </div>
+            </div>
+            <div>
+                <label for="product_properties">Product Properties:</label>
+                <select id="product_properties" name="product_properties" multiple>
+                    <option value="AI">AI</option>
+                    <option value="GUI">GUI</option>
+                    <option value="Personal Information">Personal Information</option>
+                </select>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Select one or more product properties.</span>
+                </div>
+            </div>
+            <div>
+                <label for="retirement_date">Retirement Date:</label>
+                <input type="date" id="retirement_date" name="retirement_date" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Specify the retirement date of the product.</span>
+                </div>
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" maxlength="2500"></textarea>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Provide a detailed description of the product (Max 2500 characters).</span>
+                </div>
+            </div>
+            <div>
+                <label for="risks">Risks:</label>
+                <textarea id="risks" name="risks" maxlength="2500"></textarea>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">List potential risks associated with the product.</span>
+                </div>
+            </div>
+            <div>
+                <label for="additional_properties">Additional Properties:</label>
+                <textarea id="additional_properties" name="additional_properties" maxlength="2500"></textarea>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Add any other relevant product properties.</span>
+                </div>
+            </div>
+            <div>
+                <label for="documentation_url">Documentation URL:</label>
+                <input type="url" id="documentation_url" name="documentation_url" oninput="validateURL(this)">
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Provide the URL for the product documentation.</span>
+                </div>
+            </div>
+            <div>
+                <label for="repository_url">Repository URL:</label>
+                <input type="url" id="repository_url" name="repository_url" oninput="validateURL(this)">
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Provide the URL for the product repository.</span>
+                </div>
+            </div>
+            <div>
+                <label for="metrics_dashboard">Metrics Dashboard:</label>
+                <input type="url" id="metrics_dashboard" name="metrics_dashboard" oninput="validateURL(this)">
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Provide the URL for the product metrics dashboard.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Value Section -->
+        <section>
+            <h2>Business Value</h2>
+            <div>
+                <label for="decision_making">Decision Making (0-10):</label>
+                <input type="range" id="decision_making" name="decision_making" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's impact on decision-making.</span>
+                </div>
+            </div>
+            <div>
+                <label for="monetization">Monetization (0-10):</label>
+                <input type="range" id="monetization" name="monetization" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's monetization potential.</span>
+                </div>
+            </div>
+            <div>
+                <label for="time_savings">Time Savings (0-10):</label>
+                <input type="range" id="time_savings" name="time_savings" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's efficiency in saving time.</span>
+                </div>
+            </div>
+            <div>
+                <label for="reporting">Reporting (0-10):</label>
+                <input type="range" id="reporting" name="reporting" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's reporting capabilities.</span>
+                </div>
+            </div>
+            <div>
+                <label for="processes">Processes (0-10):</label>
+                <input type="range" id="processes" name="processes" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's optimization of processes.</span>
+                </div>
+            </div>
+            <div>
+                <label for="collaboration">Collaboration (0-10):</label>
+                <input type="range" id="collaboration" name="collaboration" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's collaboration potential.</span>
+                </div>
+            </div>
+            <div>
+                <label for="documentation_audits">Documentation Audits (0-10):</label>
+                <input type="range" id="documentation_audits" name="documentation_audits" min="0" max="10" onchange="updateSliderValue(this)">
+                <span>5</span>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Rate the product's documentation and audit capabilities.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Owner Information Section -->
+        <section>
+            <h2>Product Owner Information</h2>
+            <div>
+                <label for="product_owner_name">Product Owner Name:</label>
+                <input type="text" id="product_owner_name" name="product_owner_name" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Enter the full name of the product owner.</span>
+                </div>
+            </div>
+            <div>
+                <label for="product_owner_zid">Product Owner ZID:</label>
+                <input type="text" id="product_owner_zid" name="product_owner_zid" required oninput="validateZID(this)">
+                <div id="zid-error" class="error-message"></div>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Enter the unique 6-character ZID of the product owner.</span>
+                </div>
+            </div>
+            <div>
+                <label for="product_owner_email">Product Owner Email:</label>
+                <input type="email" id="product_owner_email" name="product_owner_email" required oninput="validateEmail(this)">
+                <div id="email-error" class="error-message"></div>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Enter a valid email ending with @xyz.com.</span>
+                </div>
+            </div>
+            <div>
+                <label for="valid_from_date">Valid From Date:</label>
+                <input type="date" id="valid_from_date" name="valid_from_date" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Specify the start date for the ownership.</span>
+                </div>
+            </div>
+            <div>
+                <label for="valid_to_date">Valid To Date:</label>
+                <input type="date" id="valid_to_date" name="valid_to_date" required>
+                <div class="tooltip">ℹ
+                    <span class="tooltiptext">Specify the end date for the ownership.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Submit Button -->
+        <button type="submit">Save and Move to Step 2</button>
+    </form>
+</body>
+</html>
+

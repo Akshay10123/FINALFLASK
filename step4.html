@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Data Sources</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function addSubform(dataSource = null) {
+            let dataSourceCount = document.querySelectorAll(".subform").length + 1;
+            const container = document.getElementById("subform-container");
+
+            const database = dataSource ? dataSource.database_name : "";
+            const schema = dataSource ? dataSource.schema_name : "";
+            const table = dataSource ? dataSource.table_name : "";
+            const dataType = dataSource ? dataSource.data_type : "Source";
+            const validFrom = dataSource ? dataSource.valid_from : new Date().toISOString().split("T")[0];
+            const validTo = dataSource ? dataSource.valid_to : "9999-12-31";
+
+            const subform = `
+                <div class="subform" id="subform-${dataSourceCount}">
+                    <h3>Snowflake Data Source ${dataSourceCount}</h3>
+                    
+                    <label for="database-Subform-${dataSourceCount}">Database Name:</label>
+                    <input type="text" name="database-Subform-${dataSourceCount}" value="${database}" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the Snowflake database name.</span>
+                    </div>
+                    <br>
+
+                    <label for="schema-Subform-${dataSourceCount}">Schema Name:</label>
+                    <input type="text" name="schema-Subform-${dataSourceCount}" value="${schema}" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the Snowflake schema name.</span>
+                    </div>
+                    <br>
+
+                    <label for="table-Subform-${dataSourceCount}">Table Name:</label>
+                    <input type="text" name="table-Subform-${dataSourceCount}" value="${table}" required>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Enter the Snowflake table name.</span>
+                    </div>
+                    <br>
+
+                    <label for="data_type-Subform-${dataSourceCount}">Snowflake Data Type:</label>
+                    <select name="data_type-Subform-${dataSourceCount}" required>
+                        <option value="Source" ${dataType === "Source" ? "selected" : ""}>Source</option>
+                        <option value="Output" ${dataType === "Output" ? "selected" : ""}>Output</option>
+                        <option value="Source and Output" ${dataType === "Source and Output" ? "selected" : ""}>Source and Output</option>
+                    </select>
+                    <span class="error-message"></span>
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Select the type of data (Source, Output, or both).</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_from-Subform-${dataSourceCount}">Valid From:</label>
+                    <input type="date" name="valid_from-Subform-${dataSourceCount}" value="${validFrom}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is today’s date.</span>
+                    </div>
+                    <br>
+
+                    <label for="valid_to-Subform-${dataSourceCount}">Valid To:</label>
+                    <input type="date" name="valid_to-Subform-${dataSourceCount}" value="${validTo}">
+                    <div class="tooltip">ℹ
+                        <span class="tooltiptext">Default is 9999-12-31.</span>
+                    </div>
+                    <br>
+
+                    <button type="button" onclick="removeSubform(${dataSourceCount})">Remove</button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML("beforeend", subform);
+            const addButtonContainer = document.getElementById("add-button-container");
+            container.appendChild(addButtonContainer);
+
+            updateSkipButtonVisibility();
+        }
+
+        function removeSubform(index) {
+            const subform = document.getElementById(`subform-${index}`);
+            if (subform) subform.remove();
+
+            updateSkipButtonVisibility();
+        }
+
+        function updateSkipButtonVisibility() {
+            const skipButton = document.getElementById("skip-button");
+            const subformCount = document.querySelectorAll(".subform").length;
+
+            skipButton.style.display = subformCount === 0 ? "inline-block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load pre-existing subforms if available
+            const snowflakeDataSources = {{ snowflake_data_sources | tojson }};
+            if (snowflakeDataSources.length > 0) {
+                snowflakeDataSources.forEach(dataSource => addSubform(dataSource));
+            } else {
+                updateSkipButtonVisibility();
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Snowflake Data Sources</h1>
+    <form method="POST">
+        <div id="subform-container"></div>
+
+        <div id="add-button-container">
+            <button type="button" onclick="addSubform()">Add Data Source</button>
+        </div>
+
+        <!-- Previous Button -->
+        <button type="submit" name="action" value="back_to_step3">Previous</button>
+        <!-- Skip Button -->
+        <button type="submit" id="skip-button" name="action" value="skip" style="display: none;">Skip</button>
+        <!-- Next Button -->
+        <button type="submit" name="action" value="next_to_step5">Save and Move to Step 5</button>
+    </form>
+</body>
+</html>
