@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 20%;
+            background-color: #f4f4f4;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        .content h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .content p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .content a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>DP Inventory</h3>
+        <a href="https://example.com/inventory_explorer" target="_blank">Inventory Explorer</a>
+        <a href="https://example.com/inventory_updater" target="_blank">Inventory Updater</a>
+        <a href="{{ url_for('step1') }}">New Product Registration</a>
+        <a href="https://example.com/old_inventory_updater" target="_blank">Old Inventory Updater</a>
+    </div>
+    <div class="content">
+        <h1>WELCOME TO THE Center of Excellence in Data Products (CoEDP) PRODUCT INVENTORY</h1>
+        <p>
+            For additional information on the Data Product Inventory, please visit
+            <a href="https://example.com/confluence_page" target="_blank">this confluence page</a>.
+        </p>
+        <p>To start, please open the sidebar on the top-left corner of this page.</p>
+    </div>
+</body>
+</html>
