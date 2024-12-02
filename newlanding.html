@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Reset and basic styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #004085;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.2em;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            background-color: #f4f4f4;
+            position: fixed;
+            top: 50px; /* Leave space for header */
+            left: 0;
+            height: calc(100% - 50px);
+            width: 250px;
+            overflow: hidden;
+            transition: width 0.3s;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar a {
+            color: #333;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            font-size: 1em;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar-toggle {
+            cursor: pointer;
+            text-align: center;
+            padding: 10px 0;
+            background-color: #ccc;
+            border-top: 1px solid #ddd;
+        }
+
+        .sidebar.collapsed a {
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        /* Content section */
+        .content {
+            margin: 70px 20px 20px 270px; /* Adjust for sidebar and header */
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ .content {
+            margin-left: 70px; /* Adjust margin when sidebar is collapsed */
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        Data Products Inventory
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <a href="{{ url_for('landing_page') }}">Home</a>
+        <a href="https://example.com/inventory_explorer" target="_blank">Inventory Explorer/Updater</a>
+        <a href="{{ url_for('step1') }}">New Product Registration</a>
+        <div class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</div>
+    </div>
+
+    <!-- Main content -->
+    <div class="content">
+        {% block content %}
+        <!-- Dynamic content will be injected here -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; {{ year }} Center of Excellence in Data Products (CoEDP)
+    </footer>
+
+    <script>
+        // Sidebar toggle functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>
