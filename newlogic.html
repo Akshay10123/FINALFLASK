@@ -1,0 +1,28 @@
+<form method="POST">
+    {% if is_authorized %}
+    <div>
+        <label for="env_selection">Select Environment:</label>
+        <select id="env_selection" name="env_selection">
+            <option value="P">Production</option>
+            <option value="D">Demo/Dev</option>
+        </select>
+    </div>
+    {% endif %}
+    <button type="submit" name="action" value="save_env">Submit</button>
+</form>
+
+@app.route("/", methods=["GET", "POST"])
+def landing_page():
+    current_user_id = request.args.get("user_id", "unknown_user")  # Replace with actual user ID logic
+    is_authorized = current_user_id in AUTHORIZED_USER_IDS
+
+    if request.method == "POST":
+        action = request.form.get("action")
+        if action == "save_env":
+            env_selection = request.form.get("env_selection", "P")  # Default to Production
+            if env_selection == "D":
+                data_store["env"] = {"data": "data-d", "schema": "sch-d", "role": "role-d"}
+            else:
+                data_store["env"] = {"data": "data-p", "schema": "sch-p", "role": "role-p"}
+
+    return render_template("landing_page.html", is_authorized=is_authorized)
