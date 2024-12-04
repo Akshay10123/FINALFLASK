@@ -1,0 +1,53 @@
+<script>
+    function validateForm(event) {
+        // Prevent form submission until validation is done
+        event.preventDefault();
+
+        const subforms = document.querySelectorAll(".subform");
+        let allValid = true;
+
+        subforms.forEach((subform) => {
+            const nameInput = subform.querySelector("input[name^='name']");
+            const zidInput = subform.querySelector("input[name^='zid']");
+            const emailInput = subform.querySelector("input[name^='email']");
+
+            // Validate Name
+            validateField(nameInput);
+            if (nameInput.style.borderColor === "red") {
+                allValid = false;
+            }
+
+            // Validate ZID
+            validateZID(zidInput);
+            if (zidInput.style.borderColor === "red") {
+                allValid = false;
+            }
+
+            // Validate Email
+            validateEmail(emailInput);
+            if (emailInput.style.borderColor === "red") {
+                allValid = false;
+            }
+        });
+
+        // Submit the form only if all validations pass
+        if (allValid) {
+            event.target.submit();
+        }
+    }
+</script>
+
+<body>
+    <h1>Product User Form</h1>
+    <form method="POST" onsubmit="validateForm(event)">
+        <div id="subform-container"></div>
+
+        <div id="add-button-container">
+            <button type="button" onclick="addSubform()">Add Product Owner</button>
+        </div>
+
+        <button type="submit" name="action" value="back_to_step1">Previous</button>
+        <button type="submit" id="skip-button" name="action" value="skip" style="display: none;">Skip</button>
+        <button type="submit" name="action" value="next_to_step3">Save and Move to Step 3</button>
+    </form>
+</body>
