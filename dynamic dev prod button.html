@@ -1,0 +1,29 @@
+<form id="environmentForm">
+    <label for="environment">Select Environment:</label>
+    <select id="environment" name="environment">
+        <option value="prod">Production</option>
+        <option value="demo">Demo/Dev</option>
+    </select>
+    <button type="button" onclick="handleSubmit()">Submit</button>
+</form>
+
+<div id="responseMessage" style="margin-top: 20px; font-size: 1.2em; color: #007BFF;"></div>
+
+<script>
+    function handleSubmit() {
+        const environment = document.getElementById('environment').value;
+        const responseDiv = document.getElementById('responseMessage');
+        
+        // Display appropriate message
+        if (environment === "demo") {
+            responseDiv.textContent = "You are now in Demo/Dev version. Enjoy exploring!";
+        } else {
+            responseDiv.textContent = "You are now in Production version.";
+        }
+        
+        // Add optional delay for message visibility
+        setTimeout(() => {
+            document.getElementById('environmentForm').submit(); // Submit the form
+        }, 2000); // Adjust delay as needed (e.g., 2 seconds)
+    }
+</script>
