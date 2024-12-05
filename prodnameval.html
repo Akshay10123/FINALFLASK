@@ -1,0 +1,56 @@
+<script>
+    const existingProductNames = {{ existing_product_names | tojson }};
+</script>
+
+function validateProductName(input) {
+    const productName = input.value.trim();
+    const errorField = document.getElementById("product-name-error");
+
+    if (productName === "") {
+        errorField.textContent = "Product name is required.";
+        input.style.borderColor = "red";
+        return false;
+    }
+
+    if (existingProductNames.includes(productName)) {
+        errorField.textContent = "This product name is already registered.";
+        input.style.borderColor = "red";
+        return false;
+    }
+
+    errorField.textContent = "";
+    input.style.borderColor = "green";
+    return true;
+}
+
+// Attach to form submission
+document.querySelector("form").addEventListener("submit", (event) => {
+    const productNameInput = document.getElementById("product_name");
+    const isValid = validateProductName(productNameInput);
+
+    if (!isValid) {
+        event.preventDefault(); // Stop form submission if invalid
+    }
+});
+
+@app.route("/step1", methods=["GET", "POST"])
+def step1():
+    # Fetch existing product names
+    try:
+        conn = snowflake.connector.connect(
+            user="your_user",
+            password="your_password",
+            account="your_account",
+            database="your_database",
+            schema="your_schema"
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT product_name FROM product_info")
+        existing_product_names = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        existing_product_names = []
+
+    return render_template("step1.html", existing_product_names=existing_product_names)
+
