@@ -1,0 +1,99 @@
+
+### HTML for Product Properties Questions
+<div>
+    <label>Does this product use AI?</label>
+    <input type="radio" id="ai-yes" name="ai_property" value="Yes" required>
+    <label for="ai-yes">Yes</label>
+    <input type="radio" id="ai-no" name="ai_property" value="No" required>
+    <label for="ai-no">No</label>
+</div>
+
+<div>
+    <label>Does this product have a GUI?</label>
+    <input type="radio" id="gui-yes" name="gui_property" value="Yes" required>
+    <label for="gui-yes">Yes</label>
+    <input type="radio" id="gui-no" name="gui_property" value="No" required>
+    <label for="gui-no">No</label>
+</div>
+
+<div>
+    <label>Does this product involve Personal Information?</label>
+    <input type="radio" id="personal-info-yes" name="personal_info_property" value="Yes" required>
+    <label for="personal-info-yes">Yes</label>
+    <input type="radio" id="personal-info-no" name="personal_info_property" value="No" required>
+    <label for="personal-info-no">No</label>
+</div>
+
+### HTML for Risks Section
+<div>
+    <label>Is there an Operational Risk?</label>
+    <input type="radio" id="operational-risk-yes" name="operational_risk" value="Yes" required>
+    <label for="operational-risk-yes">Yes</label>
+    <input type="radio" id="operational-risk-no" name="operational_risk" value="No" required>
+    <label for="operational-risk-no">No</label>
+</div>
+
+<div>
+    <label>Is there an Audit Risk?</label>
+    <input type="radio" id="audit-risk-yes" name="audit_risk" value="Yes" required>
+    <label for="audit-risk-yes">Yes</label>
+    <input type="radio" id="audit-risk-no" name="audit_risk" value="No" required>
+    <label for="audit-risk-no">No</label>
+</div>
+
+<div>
+    <label>Is there a Data Exposure Risk?</label>
+    <input type="radio" id="data-exposure-risk-yes" name="data_exposure_risk" value="Yes" required>
+    <label for="data-exposure-risk-yes">Yes</label>
+    <input type="radio" id="data-exposure-risk-no" name="data_exposure_risk" value="No" required>
+    <label for="data-exposure-risk-no">No</label>
+</div>
+
+### JavaScript for Pre-Fill
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const data = {{ data_store | tojson | safe }};
+    
+    // Pre-fill Product Properties
+    document.getElementById(data.product_info?.ai_property === "Yes" ? "ai-yes" : "ai-no").checked = true;
+    document.getElementById(data.product_info?.gui_property === "Yes" ? "gui-yes" : "gui-no").checked = true;
+    document.getElementById(data.product_info?.personal_info_property === "Yes" ? "personal-info-yes" : "personal-info-no").checked = true;
+
+    // Pre-fill Risks
+    document.getElementById(data.product_info?.operational_risk === "Yes" ? "operational-risk-yes" : "operational-risk-no").checked = true;
+    document.getElementById(data.product_info?.audit_risk === "Yes" ? "audit-risk-yes" : "audit-risk-no").checked = true;
+    document.getElementById(data.product_info?.data_exposure_risk === "Yes" ? "data-exposure-risk-yes" : "data-exposure-risk-no").checked = true;
+});
+</script>
+
+### Python Backend Handling
+# Capture Product Properties and Risks from Form
+product_properties = {
+    "ai_property": request.form.get("ai_property", "No"),
+    "gui_property": request.form.get("gui_property", "No"),
+    "personal_info_property": request.form.get("personal_info_property", "No"),
+}
+
+risks = {
+    "operational_risk": request.form.get("operational_risk", "No"),
+    "audit_risk": request.form.get("audit_risk", "No"),
+    "data_exposure_risk": request.form.get("data_exposure_risk", "No"),
+}
+
+data_store["product_info"].update(product_properties)
+data_store["product_info"]["risks"] = risks
+
+### Review Page Display
+<section>
+    <h2>Product Properties</h2>
+    <p><strong>Uses AI:</strong> {{ data_store.product_info.ai_property }}</p>
+    <p><strong>Has GUI:</strong> {{ data_store.product_info.gui_property }}</p>
+    <p><strong>Involves Personal Information:</strong> {{ data_store.product_info.personal_info_property }}</p>
+</section>
+
+<section>
+    <h2>Risks</h2>
+    <p><strong>Operational Risk:</strong> {{ data_store.product_info.risks.operational_risk }}</p>
+    <p><strong>Audit Risk:</strong> {{ data_store.product_info.risks.audit_risk }}</p>
+    <p><strong>Data Exposure Risk:</strong> {{ data_store.product_info.risks.data_exposure_risk }}</p>
+</section>
