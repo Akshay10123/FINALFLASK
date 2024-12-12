@@ -1,0 +1,29 @@
+/* Section Styling */
+.form-section {
+    margin-bottom: 20px;
+}
+
+/* Row Styling */
+.question-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Question Text Styling */
+.question-row span {
+    flex: 1; /* Occupies available space */
+    margin-right: 10px; /* Spacing between question and options */
+    font-weight: bold;
+}
+
+/* Label Spacing */
+.question-row label {
+    margin-left: 10px;
+}
+
+/* Optional: Add spacing between sections */
+h2 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
